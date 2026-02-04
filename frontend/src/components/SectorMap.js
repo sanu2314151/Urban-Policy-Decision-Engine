@@ -143,6 +143,7 @@ function SectorMap({ sectors, selectedSector, onSelectSector }) {
       markersRef.current.push(marker);
     });
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sectors, selectedSector, onSelectSector]);
 
   // Fly to selected sector
@@ -155,6 +156,7 @@ function SectorMap({ sectors, selectedSector, onSelectSector }) {
         duration: 1.5,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSector]);
 
   return (
