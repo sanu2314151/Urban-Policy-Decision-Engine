@@ -4,7 +4,7 @@ import './App.css';
 import SectorList from './components/SectorList';
 import SectorDetail from './components/SectorDetail';
 import PolicyCard from './components/PolicyCard';
-import TrendChart from './componeents/TrendChart';
+import TrendChart from './components/TrendChart';
 import SectorMap from './components/SectorMap';
 
 function App() {
