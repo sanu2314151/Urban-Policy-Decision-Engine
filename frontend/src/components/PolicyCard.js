@@ -34,11 +34,11 @@ function PolicyCard({ policy, onSimulate, simulation }) {
   }
 
   return (
-    <div className={`policy-card policy-${policyData.priority.toLowerCase()}`}>
+    <div className={`policy-card policy-${policyData.priority.toLowerCase()} ${policyData.is_health_advisory ? 'health-advisory' : ''}`}>
       {/* Header with Policy Title */}
       <div className="policy-header">
         <div className="policy-title-section">
-          <h2>🔧 Recommended Policy Restrictions</h2>
+          <h2>{policyData.is_health_advisory ? '🏥 Health Advisory' : '🔧 Recommended Policy Restrictions'}</h2>
         </div>
       </div>
 
@@ -54,44 +54,62 @@ function PolicyCard({ policy, onSimulate, simulation }) {
 
         {/* Reason */}
         <div className="policy-section">
-          <h3>📋 Reason</h3>
+          <h3>📋 {policyData.is_health_advisory ? 'Advisory Details' : 'Reason'}</h3>
           <p className="reason-text">{policyData.reason}</p>
         </div>
 
-        {/* Expected Impact */}
-        <div className="policy-metrics">
-          <div className="metric">
-            <div className="metric-label">Expected PM2.5 Reduction</div>
-            <div className="metric-value">
-              {policyData.expected_pm25_reduction_percentage}%
+        {/* Expected Impact - Only show for non-health advisories */}
+        {!policyData.is_health_advisory && (
+          <div className="policy-metrics">
+            <div className="metric">
+              <div className="metric-label">Expected PM2.5 Reduction</div>
+              <div className="metric-value">
+                {policyData.expected_pm25_reduction_percentage}%
+              </div>
+              <div className="metric-bar">
+                <div
+                  className="metric-fill"
+                  style={{
+                    width: `${policyData.expected_pm25_reduction_percentage}%`
+                  }}
+                ></div>
+              </div>
             </div>
-            <div className="metric-bar">
-              <div
-                className="metric-fill"
-                style={{
-                  width: `${policyData.expected_pm25_reduction_percentage}%`
-                }}
-              ></div>
+
+            <div className="metric">
+              <div className="metric-label">Estimated Time to Effect</div>
+              <div className="metric-value">
+                {policyData.estimated_time_hours}
+                <span className="metric-unit">hrs</span>
+              </div>
             </div>
           </div>
+        )}
 
-          <div className="metric">
-            <div className="metric-label">Estimated Time to Effect</div>
-            <div className="metric-value">
-              {policyData.estimated_time_hours}
-              <span className="metric-unit">hrs</span>
+        {/* Health Advisory Info */}
+        {policyData.is_health_advisory && (
+          <div className="health-advisory-info">
+            <div className="advisory-duration">
+              <span className="advisory-label">⏱️ Advisory Duration:</span>
+              <span className="advisory-value">{policyData.estimated_time_hours} hours</span>
             </div>
+            <p className="advisory-note">
+              ⚠️ This is a protective health measure, not a pollution reduction policy. 
+              Air quality improvement depends on meteorological conditions and source control.
+            </p>
           </div>
-        </div>
+        )}
 
-        {/* Simulate Button */}
-        <button
-          className="button button-primary simulate-button"
-          onClick={handleSimulate}
-          disabled={isSimulating}
-        >
-          {isSimulating ? '⏳ Simulating...' : '🔬 Simulate Policy Impact'}
-        </button>
+        {/* Simulate Button - Only show for non-health advisories */}
+        {!policyData.is_health_advisory && (
+          <button
+            className="button button-primary simulate-button"
+            onClick={handleSimulate}
+            disabled={isSimulating}
+          >
+            {isSimulating ? '⏳ Simulating...' : '🔬 Simulate Policy Impact'}
+          </button>
+        )}
       </div>
 
       {/* Simulation Results */}
