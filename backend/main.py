@@ -49,6 +49,7 @@ class PolicyRecommendation(BaseModel):
     expected_pm25_reduction_percentage: float
     estimated_time_hours: int
     priority: str
+    is_health_advisory: bool = False
 
 
 # ============================================================================
@@ -576,6 +577,28 @@ def generate_policy_recommendation(
                 priority="medium"
         )
     
+    # FALLBACK: Hazardous pollution levels - Public Health Protection
+    if pm25 > 250 or pm10 > 350:
+        return PolicyRecommendation(
+            policy_name="Public Health Protection Advisory",
+            reason=f"Hazardous pollution levels detected (PM2.5={pm25:.0f}, PM10={pm10:.0f}). City-wide health advisory: N95 mask usage mandatory outdoors, limit outdoor activities, remote work/online classes recommended.",
+            expected_pm25_reduction_percentage=0,
+            estimated_time_hours=24,
+            priority="critical",
+            is_health_advisory=True
+        )
+    
+    # Secondary fallback: Very unhealthy levels
+    if pm25 > 200 or pm10 > 250:
+        return PolicyRecommendation(
+            policy_name="Health Alert & Activity Restrictions",
+            reason=f"Very unhealthy air quality (PM2.5={pm25:.0f}, PM10={pm10:.0f}). Advisory: Wear masks outdoors, sensitive groups should stay indoors, reduce prolonged outdoor exertion.",
+            expected_pm25_reduction_percentage=0,
+            estimated_time_hours=12,
+            priority="high",
+            is_health_advisory=True
+        )
+    
     return None
 
 
@@ -674,7 +697,8 @@ def get_sector_policy(sector_id: int):
                 "reason": policy.reason,
                 "expected_pm25_reduction_percentage": policy.expected_pm25_reduction_percentage,
                 "estimated_time_hours": policy.estimated_time_hours,
-                "priority": policy.priority
+                "priority": policy.priority,
+                "is_health_advisory": policy.is_health_advisory
             },
             "timestamp": get_timestamp()
         }
