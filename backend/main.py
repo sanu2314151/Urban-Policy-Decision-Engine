@@ -12,6 +12,7 @@ import threading
 import time
 import httpx
 import asyncio
+import os
 from datetime import datetime
 
 app = FastAPI(
@@ -83,8 +84,8 @@ SECTORS_CONFIG = {
 # In-memory cache for sector data
 SECTORS_DATA = {}
 
-# WAQI API (World Air Quality Index) - Using user's API token
-WAQI_TOKEN = "3cf43cf473e9927e0cfa20b60760afb46e4e2e7f"
+# WAQI API (World Air Quality Index) - Read from environment variable
+WAQI_TOKEN = os.getenv("WAQI_TOKEN", "")
 WAQI_BASE = "https://api.waqi.info"
 
 # Station names for Delhi NCR (from WAQI network)
